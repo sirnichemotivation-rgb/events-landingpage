@@ -1,57 +1,254 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Justpose Studio | Gallery</title>
-    <script src="https://product-gallery.cloudinary.com/all.js" type="text/javascript"></script>
-    <style>
-        :root { --accent: #00f2ff; }
-        body { background: #000; color: white; font-family: 'Segoe UI', sans-serif; margin: 0; display: flex; flex-direction: column; align-items: center; }
-        
-        /* HEADER SECTION */
-        .header { width: 100%; padding: 15px 0; border-bottom: 1px solid #222; background: #0a0a0a; position: sticky; top: 0; z-index: 100; }
-        h1 { margin: 0; font-size: 1.3rem; color: var(--accent); letter-spacing: 2px; }
-        #event-name { font-size: 0.75rem; color: #777; margin-bottom: 4px; text-transform: uppercase; }
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>JustPose Photobooth and Studio</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
 
-        /* GALLERY CONTAINER - Ito ang nagpapa-fit sa screen */
-        #gallery-wrapper { 
-            width: 100%; 
-            max-width: 600px; /* Limit ang laki sa Windows PC */
-            height: calc(100vh - 80px); 
-            margin: 0 auto;
-        }
-        #my-gallery { width: 100%; height: 100%; }
-    </style>
+/* --- 1. BASE & BACKGROUND --- */
+body {
+  font-family: 'Poppins', sans-serif;
+  background: #e9dfd4 url('https://wallpapers.com/images/hd/beige-color-background-9er7qe4udj5msg1z.jpg') no-repeat center/cover;
+  background-attachment: fixed;
+  color: #3e2723;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 20px;
+  margin: 0;
+}
+
+/* --- 2. MAIN GLASS PANEL --- */
+.main-card {
+  background: rgba(255, 255, 255, 0.1); 
+  backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(15px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 40px;
+  padding: 45px 20px;
+  max-width: 400px;
+  width: 95%;
+  box-shadow: 0 15px 35px rgba(0,0,0,0.05);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  animation: fadeIn 1s ease-out;
+}
+
+.logo {
+  width: 120px; height: 120px; border-radius: 50%; object-fit: cover;
+  border: 4px solid rgba(255, 255, 255, 0.8); margin-bottom: 20px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.1); animation: float 4s ease-in-out infinite;
+}
+
+@keyframes float { 0%, 100% { transform: translateY(0px); } 50% { transform: translateY(-10px); } }
+
+h1 { font-size: 1.6rem; font-weight: 700; color: #5d4037; margin: 0; }
+h2 { font-weight: 400; font-size: 0.85rem; margin: 8px 0 30px; color: #6d4c41; opacity: 0.8; }
+
+/* --- 3. MAIN BUTTONS (SOLID COLOR HOVER) --- */
+.btn-container { display: flex; flex-direction: column; gap: 15px; width: 100%; align-items: center; }
+
+.events-btn, .packages-btn, .connect-btn {
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1rem; font-weight: 700; width: 280px; height: 55px;
+  border-radius: 50px; 
+  background: rgba(245, 245, 220, 0.4); /* Beige Glass Base */
+  backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.5); 
+  color: #5d4037;
+  cursor: pointer; 
+  transition: all 0.3s ease; 
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+  text-decoration: none;
+}
+
+/* Heto ang hiling mong Solid Background Color sa Hover */
+.events-btn:hover, .packages-btn:hover, .connect-btn:hover {
+  background: #3e2723; /* Solid Dark Brown */
+  color: #ffffff;      /* White text para kitang-kita */
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px rgba(62, 39, 35, 0.4);
+}
+
+.events-btn { animation: pulse-beige 2s infinite; }
+@keyframes pulse-beige {
+  0% { box-shadow: 0 0 0 0 rgba(245, 245, 220, 0.7); }
+  70% { box-shadow: 0 0 0 15px rgba(245, 245, 220, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(245, 245, 220, 0); }
+}
+
+/* --- 4. MODAL & SCROLLBAR --- */
+.modal {
+  display: none; position: fixed; z-index: 2000;
+  left: 0; top: 0; width: 100%; height: 100%;
+  background: rgba(0,0,0,0.5); backdrop-filter: blur(4px);
+  justify-content: center; align-items: center;
+}
+
+.modal-content {
+  background:rgb(210, 218, 219); 
+  backdrop-filter: blur(5px); border-radius: 20px;
+  padding: 35px 20px; width: 40%; max-width: 380px;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.2); color:#a87b43;
+  position: relative; max-height: 55vh; overflow-y: auto;
+}
+
+.modal-content::-webkit-scrollbar { width: 10px; }
+.modal-content::-webkit-scrollbar-track { background: rgba(62, 39, 35, 0.05); border-radius: 10px; }
+.modal-content::-webkit-scrollbar-thumb {
+  background: #3e2723; border-radius: 10px; border: 2px solid #385163;
+}
+
+.close-btn { position: absolute; top: 15px; right: 20px; font-size: 1.5rem; color: #3e2723; cursor: pointer; font-weight: bold; }
+
+/* --- 5. RICH COFFEE EVENT ITEMS --- */
+.event-item {
+  background: linear-gradient(135deg, #3e2723 0%, #a98860 100%);
+  color: #cd9447; border-radius: 50px; padding: 18px; margin-bottom: 15px;
+  font-weight: 700; transition: all 0.3s ease; cursor: pointer; text-align: center;
+  border: 1px solid rgba(255, 255, 255, 0.1); box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  position: relative; overflow: hidden;
+}
+
+.event-item:hover {
+  background: #385163;
+  transform: scale(1.03) translateY(-2px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+}
+
+.package-item, .connect-item {
+  background: rgb(168, 123, 67);
+  border: 1px solid rgba(62, 39, 35, 0.1);
+  border-radius: 50px; padding: 15px; margin-bottom: 12px;
+  font-weight: 600; transition: 0.3s; cursor: pointer; text-align: center;
+}
+.package-item:hover { background: #d59749; color: #cd9447; }
+
+/* --- 6. IMAGE MODAL --- */
+.image-modal {
+  display: none; position: fixed; z-index: 3000;
+  left: 0; top: 0; width: 100%; height: 100%;
+  background: rgba(0,0,0,0.9); justify-content: center; align-items: center;
+}
+.image-modal img { max-width: 90%; max-height: 75%; border-radius: 15px; border: 3px solid #fff; }
+
+@keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+footer { margin-top: 35px; font-size: 0.75rem; color: e7bf8e
+#e7bf8e; opacity: 0.6; }
+</style>
 </head>
 <body>
-    <div class="header">
-        <div id="event-name">JUSTPOSE STUDIO</div>
-        <h1>GALLERY</h1>
-    </div>
 
-    <div id="gallery-wrapper">
-        <div id="my-gallery"></div>
-    </div>
+<div class="main-card">
+  <img src="https://github.com/sirnichemotivation-rgb/events-landingpage/blob/main/Logo.jpg?raw=true" class="logo">
+  <h1>JustPose Studio</h1>
+  <h2>Follow us — We always make you smile :)</h2>
 
-    <script type="text/javascript">
-        const params = new URLSearchParams(window.location.search);
-        const tag = params.get('id');
-        const event = params.get('event') || "OUR SPECIAL EVENT";
-        document.getElementById('event-name').innerText = decodeURIComponent(event);
+  <div class="btn-container">
+    <div class="events-btn" id="eventsBtn">📅 Grab Your Photo Here!</div>
+    <div class="packages-btn" id="packagesBtn">🎁 Our Packages</div>
+    <div class="connect-btn" id="connectBtn">🌐 Connect With Us!</div>
+  </div>
 
-        if (tag) {
-            cloudinary.galleryWidget({
-                container: "#my-gallery",
-                cloudName: "dntrwkexp",
-                mediaAssets: [{ tag: tag }], 
-                displayProps: { mode: "classic", columns: 1 },
-                maxAssets: 50,
-                zoomProps: { type: "popup" },
-                navigation: "always",
-                aspectRatio: "1:1"
-            }).render();
-        }
-    </script>
+  <footer>© Justpose Photobooth and Studio · Since 2016</footer>
+</div>
+
+<div class="modal" id="eventsModal">
+  <div class="modal-content">
+    <span class="close-btn" id="closeEvents">&times;</span>
+    <h3 style="margin-bottom:25px; color:#3e2723; font-weight:700;">Upcoming Events</h3>
+    <div id="eventsContainer">Loading...</div>
+  </div>
+</div>
+
+<div class="modal" id="packagesModal">
+  <div class="modal-content">
+    <span class="close-btn" id="closePackages">&times;</span>
+    <h3 style="margin-bottom:25px; font-weight:700;">Our Packages</h3>
+    <div class="package-item" data-package="photobooth">📸 Photobooth</div>
+    <div class="package-item" data-package="photoman">🕺 PhotoMan</div>
+    <div class="package-item" data-package="360booth">🔄 360 Booth</div>
+    <div class="package-item" data-package="photocoverage">📷 Photo Coverage</div>
+    <div class="package-item" data-package="photovideocoverage">🎥 Photo Video Coverage</div>
+    <div class="package-item" data-package="highangle">🕹️ High Angle Booth</div>
+    <div class="package-item" data-package="mirrorbooth">🪞 Mirror Booth</div>
+  </div>
+</div>
+
+<div class="modal" id="connectModal">
+  <div class="modal-content">
+    <span class="close-btn" id="closeConnect">&times;</span>
+    <h3 style="margin-bottom:25px; font-weight:700;">Connect With Us</h3>
+    <div class="connect-item" onclick="window.open('https://web.facebook.com/Justposephotoboothandstudio', '_blank')">📘 Facebook</div>
+    <div class="connect-item" onclick="window.location.href='tel:09771345453'">📞 Call/Text</div>
+  </div>
+</div>
+
+<div class="image-modal" id="imageModal">
+  <img id="modalImg" src="">
+</div>
+
+<script>
+const sheetBase = "https://raw.githubusercontent.com/sirnichemotivation-rgb/events-landingpage/refs/heads/main/events.csv";
+
+document.getElementById('eventsBtn').onclick = () => {
+  document.getElementById('eventsModal').style.display = 'flex';
+  loadEvents();
+};
+
+async function loadEvents(){
+  const container = document.getElementById('eventsContainer');
+  container.innerHTML = "<p style='text-align:center;'>Searching photos...</p>";
+  try {
+    const response = await fetch(sheetBase + '?t=' + Date.now());
+    const csv = await response.text();
+    const rows = csv.split('\n').slice(1);
+    container.innerHTML = '';
+    rows.forEach(row => {
+      const [label, url] = row.split(',');
+      if(label && url) {
+        const div = document.createElement('div');
+        div.className = 'event-item';
+        div.innerHTML = `<a href="${url.trim()}" target="_blank" style="color:white;text-decoration:none;display:block;">${label.trim()}</a>`;
+        container.appendChild(div);
+      }
+    });
+  } catch(e) { container.innerHTML = "Error loading list."; }
+}
+
+document.getElementById('closeEvents').onclick = () => document.getElementById('eventsModal').style.display='none';
+document.getElementById('packagesBtn').onclick = () => document.getElementById('packagesModal').style.display='flex';
+document.getElementById('closePackages').onclick = () => document.getElementById('packagesModal').style.display='none';
+document.getElementById('connectBtn').onclick = () => document.getElementById('connectModal').style.display='flex';
+document.getElementById('closeConnect').onclick = () => document.getElementById('connectModal').style.display='none';
+
+const packageImages = {
+  photobooth: ['https://github.com/sirnichemotivation-rgb/events-landingpage/blob/main/photobooth1.jpg?raw=true'],
+  photoman: ['https://github.com/sirnichemotivation-rgb/events-landingpage/blob/main/Photoman.jpg?raw=true'],
+  '360booth': ['https://github.com/sirnichemotivation-rgb/events-landingpage/blob/main/360%20A.jpg?raw=true'],
+  photocoverage: ['https://github.com/sirnichemotivation-rgb/events-landingpage/blob/main/Birthday.png?raw=true'],
+  photovideocoverage: ['https://github.com/sirnichemotivation-rgb/events-landingpage/blob/main/COMING%20SOON.jpg?raw=true'],
+  highangle: ['https://github.com/sirnichemotivation-rgb/events-landingpage/blob/main/COMING%20SOON.jpg?raw=true'],
+  mirrorbooth: ['https://github.com/sirnichemotivation-rgb/events-landingpage/blob/main/COMING%20SOON.jpg?raw=true']
+};
+
+document.querySelectorAll('.package-item').forEach(item => {
+  item.onclick = () => {
+    const img = document.getElementById('modalImg');
+    img.src = packageImages[item.dataset.package][0];
+    document.getElementById('imageModal').style.display = 'flex';
+  };
+});
+
+document.getElementById('imageModal').onclick = () => document.getElementById('imageModal').style.display='none';
+window.onclick = (e) => { if(e.target.className === 'modal') e.target.style.display='none'; };
+</script>
+
 </body>
 </html>
